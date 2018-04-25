@@ -28,6 +28,8 @@ io.on('connection',(socket)=>{
         // console.log('user disconnected');
         let user = users.removeUser(socket.id)
         if(user) {
+            let roomList = users.getRoomList();
+            io.emit('newRoomList',{roomList})
             io.to(user.room).emit('userslist',users.getUserList(user.room));
         }
         
@@ -64,6 +66,8 @@ io.on('connection',(socket)=>{
         users.removeUser(socket.id);
         users.addUser(socket.id,data.name,data.room)
         socket.join(data.room.toLowerCase());
+        let roomList = users.getRoomList();
+        io.emit('newRoomList',{roomList})
         socket.emit('newMessage',generateMessage('admin','welcome to chat app'))    
         console.log('all user',users.users)
         console.log('user_chat',users.getUserList(data.room))
